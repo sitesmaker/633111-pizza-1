@@ -30,6 +30,7 @@
                   class="dough__input"
                   v-for="(item, index) in pizza.dough"
                   :key="index"
+                  :class="doughClass[index]"
                 >
                   <input
                     type="radio"
@@ -38,7 +39,7 @@
                     class="visually-hidden"
                     checked
                   />
-                  <b :style="`--dough-img: url(${item.image})`">
+                  <b>
                     {{ item.name }}
                   </b>
                   <span>{{ item.description }}</span>
@@ -98,10 +99,7 @@
                       v-for="(item, index) in pizza.ingredients"
                       :key="index"
                     >
-                      <span
-                        class="filling"
-                        :style="`--filling-img: url(${item.image})`"
-                      >
+                      <span class="filling" :class="fillingClass[index]">
                         {{ item.name }}
                       </span>
 
@@ -175,16 +173,27 @@ export default {
       misc,
       pizza,
       user,
+      fillingClass: [
+        "filling--mushrooms",
+        "filling--cheddar",
+        "filling--salami",
+        "filling--ham",
+        "filling--ananas",
+        "filling--bacon",
+        "filling--onion",
+        "filling--chile",
+        "filling--jalapeno",
+        "filling--olives",
+        "filling--tomatoes",
+        "filling--salmon",
+        "filling--mozzarella",
+        "filling--parmesan",
+        "filling--blue_cheese",
+      ],
+      doughClass: ["dough__input--light", "dough__input--large"],
     };
   },
 };
 </script>
 
-<style>
-.dough__input b::before {
-  background-image: var(--dough-img);
-}
-.filling::before {
-  background-image: var(--filling-img);
-}
-</style>
+<style></style>
