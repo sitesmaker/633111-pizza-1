@@ -30,7 +30,7 @@
                   class="dough__input"
                   v-for="(item, index) in pizza.dough"
                   :key="index"
-                  :class="doughClass[index]"
+                  :class="setClass(item.id, doughClass)"
                 >
                   <input
                     type="radio"
@@ -99,7 +99,10 @@
                       v-for="(item, index) in pizza.ingredients"
                       :key="index"
                     >
-                      <span class="filling" :class="fillingClass[index]">
+                      <span
+                        class="filling"
+                        :class="setClass(item.id, fillingClass)"
+                      >
                         {{ item.name }}
                       </span>
 
@@ -173,25 +176,91 @@ export default {
       misc,
       pizza,
       user,
-      fillingClass: [
-        "filling--mushrooms",
-        "filling--cheddar",
-        "filling--salami",
-        "filling--ham",
-        "filling--ananas",
-        "filling--bacon",
-        "filling--onion",
-        "filling--chile",
-        "filling--jalapeno",
-        "filling--olives",
-        "filling--tomatoes",
-        "filling--salmon",
-        "filling--mozzarella",
-        "filling--parmesan",
-        "filling--blue_cheese",
+      doughClass: [
+        {
+          id: 1,
+          class: "dough__input--light",
+        },
+        {
+          id: 2,
+          class: "dough__input--large",
+        },
       ],
-      doughClass: ["dough__input--light", "dough__input--large"],
+      fillingClass: [
+        {
+          id: 1,
+          class: "filling--mushrooms",
+        },
+        {
+          id: 2,
+          class: "filling--cheddar",
+        },
+        {
+          id: 3,
+          class: "filling--salami",
+        },
+        {
+          id: 4,
+          class: "filling--ham",
+        },
+        {
+          id: 5,
+          class: "filling--ananas",
+        },
+        {
+          id: 6,
+          class: "filling--bacon",
+        },
+        {
+          id: 7,
+          class: "filling--onion",
+        },
+        {
+          id: 8,
+          class: "filling--chile",
+        },
+        {
+          id: 9,
+          class: "filling--jalapeno",
+        },
+        {
+          id: 10,
+          class: "filling--olives",
+        },
+        {
+          id: 11,
+          class: "filling--tomatoes",
+        },
+        {
+          id: 12,
+          class: "filling--salmon",
+        },
+        {
+          id: 13,
+          class: "filling--mozzarella",
+        },
+        {
+          id: 14,
+          class: "filling--parmesan",
+        },
+        {
+          id: 15,
+          class: "filling--blue_cheese",
+        },
+      ],
     };
+  },
+  methods: {
+    setClass(elemId, arr) {
+      this.class = null;
+      arr.forEach((el) => {
+        if (el.id === elemId) {
+          this.class = el.class;
+          return false;
+        }
+      });
+      return this.class;
+    },
   },
 };
 </script>
