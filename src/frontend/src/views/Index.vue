@@ -1,23 +1,5 @@
 <template>
   <div>
-    <header class="header">
-      <div class="header__logo">
-        <a href="index.html" class="logo">
-          <img
-            src="public/img/logo.svg"
-            alt="V!U!E! Pizza logo"
-            width="90"
-            height="40"
-          />
-        </a>
-      </div>
-      <div class="header__cart">
-        <a href="cart.html">0 ₽</a>
-      </div>
-      <div class="header__user">
-        <a href="#" class="header__login"><span>Войти</span></a>
-      </div>
-    </header>
     <main class="content">
       <form action="#" method="post">
         <div class="content__wrapper">
@@ -25,51 +7,22 @@
           <div class="content__dough">
             <div class="sheet">
               <h2 class="title title--small sheet__title">Выберите тесто</h2>
-              <div class="sheet__content dough">
-                <label
-                  class="dough__input"
-                  v-for="(item, index) in pizza.dough"
-                  :key="index"
-                  :class="doughClass[index]"
-                >
-                  <input
-                    type="radio"
-                    name="dought"
-                    value="light"
-                    class="visually-hidden"
-                    checked
-                  />
-                  <b>
-                    {{ item.name }}
-                  </b>
-                  <span>{{ item.description }}</span>
-                </label>
-              </div>
+              <BuilderDoughSelector
+                :dough="pizza.dough"
+                :doughClass="doughClass"
+                @getDoughPrice="getDough"
+              />
             </div>
           </div>
           <div class="content__diameter">
             <div class="sheet">
               <h2 class="title title--small sheet__title">Выберите размер</h2>
-              <div class="sheet__content diameter">
-                <label
-                  class="diameter__input"
-                  :class="{
-                    'diameter__input--small': item.id === 1,
-                    'diameter__input--normal': item.id === 2,
-                    'diameter__input--big': item.id === 3,
-                  }"
-                  v-for="(item, index) in pizza.sizes"
-                  :key="index"
-                >
-                  <input
-                    type="radio"
-                    name="diameter"
-                    value="small"
-                    class="visually-hidden"
-                  />
-                  <span>{{ item.name }}</span>
-                </label>
-              </div>
+              <BuilderSizeSelector
+                :sizes="pizza.sizes"
+                :sizesClass="sizesClass"
+                :setClass="setClass"
+                @multiplier="getMultiplier"
+              />
             </div>
           </div>
           <div class="content__ingredients">
@@ -80,52 +33,19 @@
               <div class="sheet__content ingredients">
                 <div class="ingredients__sauce">
                   <p>Основной соус:</p>
-
-                  <label
-                    class="radio ingredients__input"
-                    v-for="(item, index) in pizza.sauces"
-                    :key="index"
-                  >
-                    <input type="radio" name="sauce" value="tomato" checked />
-                    <span>{{ item.name }}</span>
-                  </label>
+                  <RadioButton
+                    :saucesArr="pizza.sauces"
+                    @sausePrice="getSauce"
+                  />
                 </div>
                 <div class="ingredients__filling">
                   <p>Начинка:</p>
-
-                  <ul class="ingredients__list">
-                    <li
-                      class="ingredients__item"
-                      v-for="(item, index) in pizza.ingredients"
-                      :key="index"
-                    >
-                      <span class="filling" :class="fillingClass[index]">
-                        {{ item.name }}
-                      </span>
-
-                      <div class="counter counter--orange ingredients__counter">
-                        <button
-                          type="button"
-                          class="counter__button counter__button--minus"
-                          disabled
-                        >
-                          <span class="visually-hidden">Меньше</span>
-                        </button>
-                        <input
-                          type="text"
-                          name="counter"
-                          class="counter__input"
-                          value="0"
-                        />
-                        <button
-                          type="button"
-                          class="counter__button counter__button--plus"
-                        >
-                          <span class="visually-hidden">Больше</span>
-                        </button>
-                      </div>
-                    </li>
-                  </ul>
+                  <BuilderIngredientsSelector
+                    :pizzaIngredients="pizza.ingredients"
+                    :fillingClass="fillingClass"
+                    :setClass="setClass"
+                    @getCount="getIngredients"
+                  />
                 </div>
               </div>
             </div>
@@ -139,21 +59,17 @@
                 placeholder="Введите название пиццы"
               />
             </label>
-
-            <div class="content__constructor">
-              <div class="pizza pizza--foundation--big-tomato">
-                <div class="pizza__wrapper">
-                  <div class="pizza__filling pizza__filling--ananas"></div>
-                  <div class="pizza__filling pizza__filling--bacon"></div>
-                  <div class="pizza__filling pizza__filling--cheddar"></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="content__result">
-              <p>Итого: 0 ₽</p>
-              <button type="button" class="button" disabled>Готовьте!</button>
-            </div>
+            <SelectorItem
+              :doughClass="dough.elemClass"
+              :sauceClass="sauce.sauceClass"
+              :ingredientClass="ingredients.class"
+            />
+            <BuilderPriceCounter
+              :doughPrice="dough.price"
+              :price="ingredients.price"
+              :multiplier="multiplier"
+              :sauce="sauce.price"
+            />
           </div>
         </div>
       </form>
@@ -166,32 +82,153 @@ import misc from "@/static/misc.json";
 import pizza from "@/static/pizza.json";
 import user from "@/static/user.json";
 
+import RadioButton from "@/common/components/RadioButton.vue";
+import SelectorItem from "../common/components/SelectorItem.vue";
+
+import BuilderDoughSelector from "../modules/builder/BuilderDoughSelector.vue";
+import BuilderSizeSelector from "../modules/builder/BuilderSizeSelector.vue";
+import BuilderPriceCounter from "../modules/builder/BuilderPriceCounter.vue";
+import BuilderIngredientsSelector from "../modules/builder/BuilderIngredientsSelector.vue";
+
 export default {
   name: "IndexHome",
   data() {
     return {
+      price: 0,
+      ingredients: {
+        price: 0,
+        ingredientClass: null,
+      },
+      dough: {
+        price: 0,
+        elemClass: null,
+      },
+      multiplier: 1,
+      sauce: {
+        price: 0,
+        sauceClass: null,
+      },
       misc,
       pizza,
       user,
       fillingClass: [
-        "filling--mushrooms",
-        "filling--cheddar",
-        "filling--salami",
-        "filling--ham",
-        "filling--ananas",
-        "filling--bacon",
-        "filling--onion",
-        "filling--chile",
-        "filling--jalapeno",
-        "filling--olives",
-        "filling--tomatoes",
-        "filling--salmon",
-        "filling--mozzarella",
-        "filling--parmesan",
-        "filling--blue_cheese",
+        {
+          id: 1,
+          class: "filling--mushrooms",
+        },
+        {
+          id: 2,
+          class: "filling--cheddar",
+        },
+        {
+          id: 3,
+          class: "filling--salami",
+        },
+        {
+          id: 4,
+          class: "filling--ham",
+        },
+        {
+          id: 5,
+          class: "filling--ananas",
+        },
+        {
+          id: 6,
+          class: "filling--bacon",
+        },
+        {
+          id: 7,
+          class: "filling--onion",
+        },
+        {
+          id: 8,
+          class: "filling--chile",
+        },
+        {
+          id: 9,
+          class: "filling--jalapeno",
+        },
+        {
+          id: 10,
+          class: "filling--olives",
+        },
+        {
+          id: 11,
+          class: "filling--tomatoes",
+        },
+        {
+          id: 12,
+          class: "filling--salmon",
+        },
+        {
+          id: 13,
+          class: "filling--mozzarella",
+        },
+        {
+          id: 14,
+          class: "filling--parmesan",
+        },
+        {
+          id: 15,
+          class: "filling--blue_cheese",
+        },
       ],
       doughClass: ["dough__input--light", "dough__input--large"],
+      sizesClass: [
+        {
+          id: 1,
+          class: "diameter__input--small",
+        },
+        {
+          id: 2,
+          class: "diameter__input--normal",
+        },
+        {
+          id: 3,
+          class: "diameter__input--big",
+        },
+      ],
     };
+  },
+  components: {
+    RadioButton,
+    SelectorItem,
+    BuilderDoughSelector,
+    BuilderSizeSelector,
+    BuilderPriceCounter,
+    BuilderIngredientsSelector,
+  },
+  methods: {
+    setClass(elemId, arr) {
+      this.class = null;
+      arr.forEach((el) => {
+        if (el.id === elemId) {
+          this.class = el.class;
+          return false;
+        }
+      });
+      return this.class;
+    },
+    getDough(data) {
+      this.dough.price = data.price;
+      this.dough.elemClass = data.elemClass;
+    },
+    getSauce(data) {
+      this.sauce.price = data.price;
+      this.sauce.sauceClass = data.sauceClass;
+    },
+    getIngredients(data) {
+      let price = data.price,
+        count = data.count,
+        oldCount = data.oldCount;
+      this.ingredients.price -= price * oldCount;
+      this.ingredients.price += price * count;
+
+      this.ingredients.class = data.class;
+    },
+    getMultiplier(data) {
+      this.multiplier = data;
+    },
   },
 };
 </script>
