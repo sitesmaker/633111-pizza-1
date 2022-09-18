@@ -11,7 +11,7 @@
         name="diameter"
         class="visually-hidden"
         :value="item.multiplier"
-        v-model="multiplier"
+        @change="$emit('multiplier', Number($event.target.value))"
       />
       <span>{{ item.name }}</span>
     </label>
@@ -35,14 +35,17 @@ export default {
       type: Array,
       required: true,
     },
-    setClass: {
-      type: Function,
-      required: true,
-    },
   },
-  watch: {
-    multiplier() {
-      this.$emit("multiplier", this.multiplier);
+  methods: {
+    setClass(elemId, arr) {
+      this.class = null;
+      arr.forEach((el) => {
+        if (el.id === elemId) {
+          this.class = el.class;
+          return false;
+        }
+      });
+      return this.class;
     },
   },
 };

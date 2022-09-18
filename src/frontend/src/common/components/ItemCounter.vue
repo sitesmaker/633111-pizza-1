@@ -3,7 +3,7 @@
     <button
       type="button"
       class="counter__button counter__button--minus"
-      @click="count--"
+      @click="$emit('update:count', count - 1)"
       :disabled="count <= 0"
     >
       <span class="visually-hidden">Меньше</span>
@@ -12,13 +12,13 @@
       type="text"
       name="counter"
       class="counter__input"
-      v-model="count"
-      @input="numbersOnly"
+      :value="count"
+      @input="numbersOnly($event.target.value)"
     />
     <button
       type="button"
       class="counter__button counter__button--plus"
-      @click="count++"
+      @click="$emit('update:count', count + 1)"
       :disabled="count >= 3"
     >
       <span class="visually-hidden">Больше</span>
@@ -29,24 +29,15 @@
 <script>
 export default {
   name: "itemCounter",
-  data() {
-    return {
-      count: 0,
-    };
-  },
   props: {
-    itemPrice: {
-      type: Number,
-      required: true,
-    },
-    itemId: {
+    count: {
       type: Number,
       required: true,
     },
   },
   methods: {
-    numbersOnly() {
-      let parsed = parseInt(this.count);
+    numbersOnly(data) {
+      let parsed = parseInt(data);
       if (isNaN(parsed)) {
         this.count = 0;
       } else {
@@ -56,16 +47,7 @@ export default {
       if (this.count > 3) {
         this.count = 3;
       }
-    },
-  },
-  watch: {
-    count(newCount, oldCount) {
-      this.$emit("getCount", {
-        itemId: this.itemId,
-        price: this.itemPrice,
-        count: this.count,
-        oldCount: oldCount,
-      });
+      this.$emit("update:count", this.count);
     },
   },
 };

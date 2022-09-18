@@ -1,5 +1,8 @@
 <template>
   <div>
+    <AppLayout>
+      <slot name="header" />
+    </AppLayout>
     <main class="content">
       <form action="#" method="post">
         <div class="content__wrapper">
@@ -10,7 +13,7 @@
               <BuilderDoughSelector
                 :dough="pizza.dough"
                 :doughClass="doughClass"
-                @getDoughPrice="getDough"
+                @onUpdateDough="updateDough"
               />
             </div>
           </div>
@@ -20,8 +23,7 @@
               <BuilderSizeSelector
                 :sizes="pizza.sizes"
                 :sizesClass="sizesClass"
-                :setClass="setClass"
-                @multiplier="getMultiplier"
+                @multiplier="updateMultiplier"
               />
             </div>
           </div>
@@ -43,30 +45,22 @@
                   <BuilderIngredientsSelector
                     :pizzaIngredients="pizza.ingredients"
                     :fillingClass="fillingClass"
-                    :setClass="setClass"
-                    @getCount="getIngredients"
                   />
                 </div>
               </div>
             </div>
           </div>
           <div class="content__pizza">
-            <label class="input">
-              <span class="visually-hidden">Название пиццы</span>
-              <input
-                type="text"
-                name="pizza_name"
-                placeholder="Введите название пиццы"
-              />
-            </label>
+            <BuilderName />
             <SelectorItem
               :doughClass="dough.elemClass"
               :sauceClass="sauce.sauceClass"
-              :ingredientClass="ingredients.class"
+              :ingredients="pizza.ingredients"
+              @updateCount="updateCount"
             />
             <BuilderPriceCounter
               :doughPrice="dough.price"
-              :price="ingredients.price"
+              :ingredients="pizza.ingredients"
               :multiplier="multiplier"
               :sauce="sauce.price"
             />
@@ -89,16 +83,14 @@ import BuilderDoughSelector from "../modules/builder/BuilderDoughSelector.vue";
 import BuilderSizeSelector from "../modules/builder/BuilderSizeSelector.vue";
 import BuilderPriceCounter from "../modules/builder/BuilderPriceCounter.vue";
 import BuilderIngredientsSelector from "../modules/builder/BuilderIngredientsSelector.vue";
+import BuilderName from "../modules/builder/BuilderName.vue";
+import AppLayout from "../layouts/AppLayout.vue";
 
 export default {
   name: "IndexHome",
   data() {
     return {
       price: 0,
-      ingredients: {
-        price: 0,
-        ingredientClass: null,
-      },
       dough: {
         price: 0,
         elemClass: null,
@@ -197,19 +189,11 @@ export default {
     BuilderSizeSelector,
     BuilderPriceCounter,
     BuilderIngredientsSelector,
+    BuilderName,
+    AppLayout,
   },
   methods: {
-    setClass(elemId, arr) {
-      this.class = null;
-      arr.forEach((el) => {
-        if (el.id === elemId) {
-          this.class = el.class;
-          return false;
-        }
-      });
-      return this.class;
-    },
-    getDough(data) {
+    updateDough(data) {
       this.dough.price = data.price;
       this.dough.elemClass = data.elemClass;
     },
@@ -217,18 +201,32 @@ export default {
       this.sauce.price = data.price;
       this.sauce.sauceClass = data.sauceClass;
     },
-    getIngredients(data) {
-      let price = data.price,
-        count = data.count,
-        oldCount = data.oldCount;
-      this.ingredients.price -= price * oldCount;
-      this.ingredients.price += price * count;
-
-      this.ingredients.class = data.class;
+    updateCount($event) {
+      console.log($event);
+      if ($event.count < 3) {
+        $event.count += 1;
+      }
+      console.log($event);
+      this.pizza.ingredients.forEach((item, index) => {
+        if (item.id === $event.id) {
+          this.$set(this.pizza.ingredients, index, $event);
+        }
+      });
     },
-    getMultiplier(data) {
+    updateMultiplier(data) {
       this.multiplier = data;
     },
+  },
+  created() {
+    this.pizza.ingredients.forEach((item) => {
+      item.count = 0;
+
+      this.fillingClass.forEach((elem) => {
+        if (elem.id == item.id) {
+          item.class = elem.class;
+        }
+      });
+    });
   },
 };
 </script>

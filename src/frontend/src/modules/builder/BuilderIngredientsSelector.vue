@@ -2,21 +2,20 @@
   <ul class="ingredients__list">
     <li
       class="ingredients__item"
-      v-for="(item, index) in pizzaIngredients"
+      v-for="(item, index) in this.ingredients"
       :key="index"
     >
-      <span
+      <AppDrag
         class="filling"
         :class="setClass(item.id, fillingClass)"
-        draggable
-        @dragstart="drag($event, item, fillingClass)"
+        :transfer-data="item"
+        :draggable="item.count < 3 ? true : false"
       >
         {{ item.name }}
-      </span>
+      </AppDrag>
       <ItemCounter
-        :itemPrice="item.price"
-        :itemId="item.id"
-        @getCount="getCount"
+        :count="item.count"
+        @update:count="updateCount(index, item, $event)"
       />
     </li>
   </ul>
@@ -24,12 +23,13 @@
 
 <script>
 import ItemCounter from "@/common/components/ItemCounter.vue";
+import AppDrag from "@/common/components/AppDrag.vue";
 
 export default {
   name: "BuilderIngredientsSelector",
   data() {
     return {
-      counterData: null,
+      ingredients: this.pizzaIngredients,
     };
   },
   props: {
@@ -41,51 +41,26 @@ export default {
       type: Array,
       required: true,
     },
-    setClass: {
-      type: Function,
-      required: true,
-    },
   },
   components: {
     ItemCounter,
+    AppDrag,
   },
   methods: {
-    getCount(data) {
-      let ingredientClass = [];
-      this.fillingClass.forEach((el) => {
-        if (el.id === data.itemId) {
-          ingredientClass.push(el.class);
+    updateCount(index, item, $event) {
+      item.count = $event;
+      this.$set(this.ingredients, index, item);
+    },
+    setClass(elemId, arr) {
+      this.class = null;
+      arr.forEach((el) => {
+        if (el.id === elemId) {
+          this.class = el.class;
+          return false;
         }
       });
-      this.$emit("getCount", {
-        price: data.price,
-        count: data.count,
-        oldCount: data.oldCount,
-        class: ingredientClass,
-      });
+      return this.class;
     },
-    drag(event, item, fillingClass) {
-      let elementClass;
-
-      fillingClass.forEach((el) => {
-        if (item.id === el.id) {
-          elementClass = el.class;
-        }
-      });
-
-      event.dataTransfer.dropEffect = "move";
-      event.dataTransfer.effectAllowed = "move";
-      event.dataTransfer.setData("elementClass", elementClass);
-      event.dataTransfer.setData("elementId", item.id);
-      event.dataTransfer.setData("elementPrice", item.price);
-    },
-  },
-  created() {
-    this.$emit("getCount", {
-      price: 0,
-      count: 0,
-      oldCount: 0,
-    });
   },
 };
 </script>

@@ -57,12 +57,12 @@ export default {
           elemClass = el.class;
         }
       });
-      this.$emit("getDoughPrice", { price: price, elemClass: elemClass });
+      this.$emit("onUpdateDough", { price: price, elemClass: elemClass });
     },
   },
   created() {
     let elemClass = this.foundationDought[0].class;
-    this.$emit("getDoughPrice", { price: 0, elemClass: elemClass });
+    this.$emit("onUpdateDough", { price: 0, elemClass: elemClass });
   },
 };
 </script>

@@ -20,8 +20,8 @@ export default {
       type: Number,
       required: true,
     },
-    price: {
-      type: Number,
+    ingredients: {
+      type: Array,
       required: true,
     },
     multiplier: {
@@ -36,8 +36,16 @@ export default {
   methods: {
     totalPrice() {
       this.total =
-        this.multiplier * (this.price + this.doughPrice + this.sauce);
+        this.multiplier *
+        (this.ingredientsPrice() + this.doughPrice + this.sauce);
       return this.total;
+    },
+    ingredientsPrice() {
+      let ingredientsPrice = 0;
+      this.ingredients.forEach((item) => {
+        ingredientsPrice += item.price * item.count;
+      });
+      return ingredientsPrice;
     },
   },
 };
