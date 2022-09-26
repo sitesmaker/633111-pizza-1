@@ -15,7 +15,7 @@
       </AppDrag>
       <ItemCounter
         :count="item.count"
-        @update:count="updateCount(index, item, $event)"
+        @update:count="$emit('updateCount', { id: item.id, count: $event })"
       />
     </li>
   </ul>
@@ -47,10 +47,6 @@ export default {
     AppDrag,
   },
   methods: {
-    updateCount(index, item, $event) {
-      item.count = $event;
-      this.$set(this.ingredients, index, item);
-    },
     setClass(elemId, arr) {
       this.class = null;
       arr.forEach((el) => {

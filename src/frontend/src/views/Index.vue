@@ -1,8 +1,5 @@
 <template>
   <div>
-    <AppLayout>
-      <slot name="header" />
-    </AppLayout>
     <main class="content">
       <form action="#" method="post">
         <div class="content__wrapper">
@@ -13,7 +10,7 @@
               <BuilderDoughSelector
                 :dough="pizza.dough"
                 :doughClass="doughClass"
-                @onUpdateDough="updateDough"
+                @onUpdateDough="changeDough"
               />
             </div>
           </div>
@@ -37,7 +34,7 @@
                   <p>Основной соус:</p>
                   <RadioButton
                     :saucesArr="pizza.sauces"
-                    @sausePrice="getSauce"
+                    @sauceChange="sauceChange"
                   />
                 </div>
                 <div class="ingredients__filling">
@@ -45,21 +42,21 @@
                   <BuilderIngredientsSelector
                     :pizzaIngredients="pizza.ingredients"
                     :fillingClass="fillingClass"
+                    @updateCount="updateCount"
                   />
                 </div>
               </div>
             </div>
           </div>
           <div class="content__pizza">
-            <BuilderName />
-            <SelectorItem
+            <PizzaVIew
               :doughClass="dough.elemClass"
               :sauceClass="sauce.sauceClass"
               :ingredients="pizza.ingredients"
-              @updateCount="updateCount"
+              @addCount="addCount"
             />
             <BuilderPriceCounter
-              :doughPrice="dough.price"
+              :doughPrice="Number(dough.price)"
               :ingredients="pizza.ingredients"
               :multiplier="multiplier"
               :sauce="sauce.price"
@@ -77,14 +74,12 @@ import pizza from "@/static/pizza.json";
 import user from "@/static/user.json";
 
 import RadioButton from "@/common/components/RadioButton.vue";
-import SelectorItem from "../common/components/SelectorItem.vue";
+import PizzaVIew from "@/common/components/PizzaVIew.vue";
 
-import BuilderDoughSelector from "../modules/builder/BuilderDoughSelector.vue";
-import BuilderSizeSelector from "../modules/builder/BuilderSizeSelector.vue";
-import BuilderPriceCounter from "../modules/builder/BuilderPriceCounter.vue";
-import BuilderIngredientsSelector from "../modules/builder/BuilderIngredientsSelector.vue";
-import BuilderName from "../modules/builder/BuilderName.vue";
-import AppLayout from "../layouts/AppLayout.vue";
+import BuilderDoughSelector from "@/modules/builder/BuilderDoughSelector.vue";
+import BuilderSizeSelector from "@/modules/builder/BuilderSizeSelector.vue";
+import BuilderPriceCounter from "@/modules/builder/BuilderPriceCounter.vue";
+import BuilderIngredientsSelector from "@/modules/builder/BuilderIngredientsSelector.vue";
 
 export default {
   name: "IndexHome",
@@ -93,16 +88,36 @@ export default {
       price: 0,
       dough: {
         price: 0,
-        elemClass: null,
+        elemClass: "pizza--foundation--small",
       },
       multiplier: 1,
       sauce: {
         price: 0,
-        sauceClass: null,
+        sauceClass: "tomato",
       },
       misc,
       pizza,
       user,
+      foundationDought: [
+        {
+          id: 1,
+          class: "pizza--foundation--small",
+        },
+        {
+          id: 2,
+          class: "pizza--foundation--big",
+        },
+      ],
+      sauceArrClass: [
+        {
+          id: 1,
+          class: "tomato",
+        },
+        {
+          id: 2,
+          class: "creamy",
+        },
+      ],
       fillingClass: [
         {
           id: 1,
@@ -184,29 +199,51 @@ export default {
   },
   components: {
     RadioButton,
-    SelectorItem,
+    PizzaVIew,
     BuilderDoughSelector,
     BuilderSizeSelector,
     BuilderPriceCounter,
     BuilderIngredientsSelector,
-    BuilderName,
-    AppLayout,
   },
   methods: {
-    updateDough(data) {
-      this.dough.price = data.price;
-      this.dough.elemClass = data.elemClass;
+    changeDough(data) {
+      let elemClass = this.foundationDought[0].class,
+        price = data.price;
+
+      this.foundationDought.forEach((el) => {
+        if (data.id === el.id) {
+          elemClass = el.class;
+        }
+      });
+      this.dough.price = price;
+      this.dough.elemClass = elemClass;
     },
-    getSauce(data) {
-      this.sauce.price = data.price;
-      this.sauce.sauceClass = data.sauceClass;
+    sauceChange(data) {
+      let sauceClass = this.sauceArrClass[0].class,
+        id = data.id,
+        price = data.price;
+      this.sauceArrClass.forEach((el) => {
+        if (id === el.id) {
+          sauceClass = el.class;
+        }
+      });
+      this.sauce.price = price;
+      this.sauce.sauceClass = sauceClass;
     },
-    updateCount($event) {
-      console.log($event);
+    updateCount(data) {
+      let id = data.id,
+        count = data.count;
+      this.pizza.ingredients.forEach((item, index) => {
+        if (item.id === id) {
+          item.count = count;
+          this.$set(this.pizza.ingredients, index, item);
+        }
+      });
+    },
+    addCount($event) {
       if ($event.count < 3) {
         $event.count += 1;
       }
-      console.log($event);
       this.pizza.ingredients.forEach((item, index) => {
         if (item.id === $event.id) {
           this.$set(this.pizza.ingredients, index, $event);
@@ -218,6 +255,7 @@ export default {
     },
   },
   created() {
+    // Создаёт каждому ингредиенту счётчик
     this.pizza.ingredients.forEach((item) => {
       item.count = 0;
 

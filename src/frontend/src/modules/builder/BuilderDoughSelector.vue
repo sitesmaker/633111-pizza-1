@@ -11,7 +11,12 @@
         name="dought"
         class="visually-hidden"
         :value="item.price"
-        @change="getDoughPrice($event, item.id)"
+        @change="
+          $emit('onUpdateDough', {
+            price: $event.target.value,
+            id: item.id,
+          })
+        "
       />
       <b>
         {{ item.name }}
@@ -23,20 +28,6 @@
 <script>
 export default {
   name: "BuilderDoughSelector",
-  data() {
-    return {
-      foundationDought: [
-        {
-          id: 1,
-          class: "pizza--foundation--small",
-        },
-        {
-          id: 2,
-          class: "pizza--foundation--big",
-        },
-      ],
-    };
-  },
   props: {
     dough: {
       type: Array,
@@ -46,23 +37,6 @@ export default {
       type: Array,
       required: true,
     },
-  },
-  methods: {
-    getDoughPrice(event, id) {
-      let elemClass = this.foundationDought[0].class,
-        price = Number(event.target.value);
-
-      this.foundationDought.forEach((el) => {
-        if (id === el.id) {
-          elemClass = el.class;
-        }
-      });
-      this.$emit("onUpdateDough", { price: price, elemClass: elemClass });
-    },
-  },
-  created() {
-    let elemClass = this.foundationDought[0].class;
-    this.$emit("onUpdateDough", { price: 0, elemClass: elemClass });
   },
 };
 </script>

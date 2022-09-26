@@ -13,7 +13,7 @@
       name="counter"
       class="counter__input"
       :value="count"
-      @input="numbersOnly($event.target.value)"
+      @input="numbersOnly($event)"
     />
     <button
       type="button"
@@ -36,18 +36,18 @@ export default {
     },
   },
   methods: {
-    numbersOnly(data) {
-      let parsed = parseInt(data);
+    numbersOnly($event) {
+      let parsed = parseInt($event.target.value);
       if (isNaN(parsed)) {
-        this.count = 0;
+        $event.target.value = 0;
       } else {
-        this.count = parsed;
+        $event.target.value = parsed;
       }
 
-      if (this.count > 3) {
-        this.count = 3;
+      if ($event.target.value > 3) {
+        $event.target.value = 3;
       }
-      this.$emit("update:count", this.count);
+      this.$emit("update:count", Number($event.target.value));
     },
   },
 };

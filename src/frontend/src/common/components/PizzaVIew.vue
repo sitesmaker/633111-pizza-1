@@ -1,10 +1,10 @@
 <template>
   <div class="content__constructor">
     <div class="pizza" :class="doughClass + '-' + sauceClass">
-      <AppDrop class="pizza__wrapper" @drop="$emit('updateCount', $event)">
+      <AppDrop class="pizza__wrapper" @drop="$emit('addCount', $event)">
         <div
           class="pizza__filling"
-          v-for="(item, index) in ingredientsClass"
+          v-for="(item, index) in UpdateIngredients"
           :key="index"
           :class="['pizza__' + item, otherClass(item)]"
         ></div>
@@ -13,9 +13,9 @@
   </div>
 </template>
 <script>
-import AppDrop from "./AppDrop.vue";
+import AppDrop from "@/common/components/AppDrop.vue";
 export default {
-  name: "SelectorItem",
+  name: "PizzaVIew",
   data() {
     return {
       ingredientsClass: [],
@@ -30,23 +30,27 @@ export default {
     },
     doughClass: {
       type: String,
+      required: true,
     },
     sauceClass: {
       type: String,
+      required: true,
     },
   },
   components: { AppDrop },
-  watch: {
-    ingredients() {
+  computed: {
+    UpdateIngredients() {
+      let ingredientsClass = this.ingredientsClass;
       this.ingredients.forEach((item) => {
-        let ingredientsClassIndex = this.ingredientsClass.indexOf(item.class);
+        let ingredientsClassIndex = ingredientsClass.indexOf(item.class);
         if (ingredientsClassIndex !== -1) {
-          this.ingredientsClass.splice(ingredientsClassIndex, 1);
+          ingredientsClass.splice(ingredientsClassIndex, 1);
         }
-        if (!this.ingredientsClass.includes(item.class) && item.count > 0) {
-          this.ingredientsClass.push(item.class);
+        if (!ingredientsClass.includes(item.class) && item.count > 0) {
+          ingredientsClass.push(item.class);
         }
       });
+      return ingredientsClass;
     },
   },
   methods: {
