@@ -11,6 +11,7 @@
         name="diameter"
         class="visually-hidden"
         :value="item.multiplier"
+        v-model="multiplier"
         @change="$emit('multiplier', Number($event.target.value))"
       />
       <span>{{ item.name }}</span>

@@ -10,10 +10,11 @@
         type="radio"
         name="dought"
         class="visually-hidden"
-        :value="item.price"
+        :value="item.id"
+        v-model="isChecked"
         @change="
           $emit('onUpdateDough', {
-            price: $event.target.value,
+            price: item.price,
             id: item.id,
           })
         "
@@ -28,6 +29,11 @@
 <script>
 export default {
   name: "BuilderDoughSelector",
+  data() {
+    return {
+      isChecked: 1,
+    };
+  },
   props: {
     dough: {
       type: Array,

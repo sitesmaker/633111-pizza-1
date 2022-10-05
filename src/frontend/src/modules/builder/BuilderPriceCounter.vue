@@ -28,20 +28,15 @@ export default {
       required: true,
     },
   },
-  methods: {
-    ingredientsPrice() {
+  computed: {
+    totalPrice() {
       let ingredientsPrice = 0;
       this.ingredients.forEach((item) => {
         ingredientsPrice += item.price * item.count;
       });
-      return ingredientsPrice;
-    },
-  },
-  computed: {
-    totalPrice() {
+
       let total =
-        this.multiplier *
-        (this.ingredientsPrice() + this.doughPrice + this.sauce);
+        this.multiplier * (ingredientsPrice + this.doughPrice + this.sauce);
       return total;
     },
   },

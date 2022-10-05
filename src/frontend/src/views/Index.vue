@@ -85,14 +85,13 @@ export default {
   name: "IndexHome",
   data() {
     return {
-      price: 0,
       dough: {
-        price: 0,
+        price: 300,
         elemClass: "pizza--foundation--small",
       },
       multiplier: 1,
       sauce: {
-        price: 0,
+        price: 50,
         sauceClass: "tomato",
       },
       misc,

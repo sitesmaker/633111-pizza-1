@@ -8,7 +8,8 @@
       <input
         type="radio"
         name="sauce"
-        value="tomato"
+        :value="item.id"
+        v-model="isChecked"
         @change="$emit('sauceChange', { id: item.id, price: item.price })"
       />
       <span>{{ item.name }}</span>
@@ -19,6 +20,11 @@
 <script>
 export default {
   name: "RadioButton",
+  data() {
+    return {
+      isChecked: 1,
+    };
+  },
   props: {
     saucesArr: {
       type: Array,
