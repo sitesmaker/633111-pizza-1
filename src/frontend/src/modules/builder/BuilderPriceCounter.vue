@@ -30,10 +30,10 @@ export default {
   },
   computed: {
     totalPrice() {
-      let ingredientsPrice = 0;
-      this.ingredients.forEach((item) => {
-        ingredientsPrice += item.price * item.count;
-      });
+      let ingredientsPrice = this.ingredients.reduce((result, currentItem) => {
+        result += currentItem.count * currentItem.price;
+        return result;
+      }, 0);
 
       let total =
         this.multiplier * (ingredientsPrice + this.doughPrice + this.sauce);

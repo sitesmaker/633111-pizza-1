@@ -86,12 +86,12 @@ export default {
   data() {
     return {
       dough: {
-        price: 300,
+        price: 0,
         elemClass: "pizza--foundation--small",
       },
       multiplier: 1,
       sauce: {
-        price: 50,
+        price: 0,
         sauceClass: "tomato",
       },
       misc,
@@ -264,6 +264,10 @@ export default {
         }
       });
     });
+
+    // Устанавливает поумолчанию цену для соуса и теста
+    this.sauce.price = this.pizza.sauces[0].price;
+    this.dough.price = this.pizza.dough[0].price;
   },
 };
 </script>
