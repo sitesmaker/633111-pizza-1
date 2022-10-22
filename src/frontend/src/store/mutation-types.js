@@ -1,0 +1,5 @@
+export const UPDATE_COUNT = "UPDATE_COUNT";
+export const ADD_COUNT = "ADD_COUNT";
+export const CHANGE_DOUGH = "CHANGE_DOUGH";
+export const CHANGE_SAUCE = "CHANGE_SAUCE";
+export const UPDATE_MULTIPLIER = "UPDATE_MULTIPLIER";

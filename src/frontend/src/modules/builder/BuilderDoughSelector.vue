@@ -2,7 +2,7 @@
   <div class="sheet__content dough">
     <label
       class="dough__input"
-      v-for="(item, index) in dough"
+      v-for="(item, index) in doughAll"
       :key="index"
       :class="doughClass[index]"
     >
@@ -27,6 +27,8 @@
   </div>
 </template>
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "BuilderDoughSelector",
   data() {
@@ -35,15 +37,12 @@ export default {
     };
   },
   props: {
-    dough: {
-      type: Array,
-      required: true,
-    },
     doughClass: {
       type: Array,
       required: true,
     },
   },
+  computed: mapGetters(["doughAll"]),
 };
 </script>
 <style></style>

@@ -2,7 +2,7 @@
   <div class="sheet__content diameter">
     <label
       class="diameter__input"
-      v-for="(item, index) in sizes"
+      v-for="(item, index) in sizesAll"
       :key="index"
       :class="setClass(item.id, sizesClass)"
     >
@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "BuilderSizeSelector",
   data() {
@@ -28,10 +30,6 @@ export default {
     };
   },
   props: {
-    sizes: {
-      type: Array,
-      required: true,
-    },
     sizesClass: {
       type: Array,
       required: true,
@@ -49,6 +47,7 @@ export default {
       return this.class;
     },
   },
+  computed: mapGetters(["sizesAll"]),
 };
 </script>
 

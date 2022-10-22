@@ -8,7 +8,7 @@
             <div class="sheet">
               <h2 class="title title--small sheet__title">Выберите тесто</h2>
               <BuilderDoughSelector
-                :dough="pizza.dough"
+                :dough="doughAll"
                 :doughClass="doughClass"
                 @onUpdateDough="changeDough"
               />
@@ -18,7 +18,6 @@
             <div class="sheet">
               <h2 class="title title--small sheet__title">Выберите размер</h2>
               <BuilderSizeSelector
-                :sizes="pizza.sizes"
                 :sizesClass="sizesClass"
                 @multiplier="updateMultiplier"
               />
@@ -33,14 +32,13 @@
                 <div class="ingredients__sauce">
                   <p>Основной соус:</p>
                   <RadioButton
-                    :saucesArr="pizza.sauces"
+                    :saucesArr="saucesAll"
                     @sauceChange="sauceChange"
                   />
                 </div>
                 <div class="ingredients__filling">
                   <p>Начинка:</p>
                   <BuilderIngredientsSelector
-                    :pizzaIngredients="pizza.ingredients"
                     :fillingClass="fillingClass"
                     @updateCount="updateCount"
                   />
@@ -52,12 +50,12 @@
             <PizzaVIew
               :doughClass="dough.elemClass"
               :sauceClass="sauce.sauceClass"
-              :ingredients="pizza.ingredients"
+              :ingredients="IngredientsAll"
               @addCount="addCount"
             />
             <BuilderPriceCounter
               :doughPrice="Number(dough.price)"
-              :ingredients="pizza.ingredients"
+              :ingredients="IngredientsAll"
               :multiplier="multiplier"
               :sauce="sauce.price"
             />
@@ -69,8 +67,10 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from "vuex";
+
 import misc from "@/static/misc.json";
-import pizza from "@/static/pizza.json";
+// import pizza from "@/static/pizza.json";
 import user from "@/static/user.json";
 
 import RadioButton from "@/common/components/RadioButton.vue";
@@ -95,7 +95,7 @@ export default {
         sauceClass: "tomato",
       },
       misc,
-      pizza,
+      // pizza,
       user,
       foundationDought: [
         {
@@ -205,6 +205,10 @@ export default {
     BuilderIngredientsSelector,
   },
   methods: {
+    ...mapMutations("Builder", ["UPDATE_COUNT"]),
+    updateCount(payload) {
+      this.UPDATE_COUNT(payload);
+    },
     changeDough(data) {
       let elemClass = this.foundationDought[0].class,
         price = data.price;
@@ -229,23 +233,13 @@ export default {
       this.sauce.price = price;
       this.sauce.sauceClass = sauceClass;
     },
-    updateCount(data) {
-      let id = data.id,
-        count = data.count;
-      this.pizza.ingredients.forEach((item, index) => {
-        if (item.id === id) {
-          item.count = count;
-          this.$set(this.pizza.ingredients, index, item);
-        }
-      });
-    },
     addCount($event) {
       if ($event.count < 3) {
         $event.count += 1;
       }
-      this.pizza.ingredients.forEach((item, index) => {
+      this.IngredientsAll.forEach((item, index) => {
         if (item.id === $event.id) {
-          this.$set(this.pizza.ingredients, index, $event);
+          this.$set(this.IngredientsAll, index, $event);
         }
       });
     },
@@ -253,9 +247,12 @@ export default {
       this.multiplier = data;
     },
   },
+  computed: {
+    ...mapGetters("Builder", ["IngredientsAll", "saucesAll", "doughAll"]),
+  },
   created() {
     // Создаёт каждому ингредиенту счётчик
-    this.pizza.ingredients.forEach((item) => {
+    this.IngredientsAll.forEach((item) => {
       item.count = 0;
 
       this.fillingClass.forEach((elem) => {
@@ -266,8 +263,8 @@ export default {
     });
 
     // Устанавливает поумолчанию цену для соуса и теста
-    this.sauce.price = this.pizza.sauces[0].price;
-    this.dough.price = this.pizza.dough[0].price;
+    // this.sauce.price = this.pizza.sauces[0].price;
+    // this.dough.price = this.pizza.dough[0].price;
   },
 };
 </script>
