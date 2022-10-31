@@ -8,35 +8,26 @@
 </template>
 
 <script>
+import { mapState, mapGetters } from "vuex";
+
 export default {
   name: "BuilderPriceCounter",
-  props: {
-    doughPrice: {
-      type: Number,
-      required: true,
-    },
-    ingredients: {
-      type: Array,
-      required: true,
-    },
-    multiplier: {
-      type: Number,
-      required: true,
-    },
-    sauce: {
-      type: Number,
-      required: true,
-    },
-  },
   computed: {
+    ...mapGetters("Builder", ["getMultiplier", "IngredientsAll"]),
+    ...mapState("Builder", ["dough", "sauce"]),
     totalPrice() {
-      let ingredientsPrice = this.ingredients.reduce((result, currentItem) => {
-        result += currentItem.count * currentItem.price;
-        return result;
-      }, 0);
+      let ingredientsPrice = this.IngredientsAll.reduce(
+        (result, currentItem) => {
+          result += currentItem.count * currentItem.price;
+          return result;
+        },
+        0
+      );
 
       let total =
-        this.multiplier * (ingredientsPrice + this.doughPrice + this.sauce);
+        this.getMultiplier *
+        (ingredientsPrice + this.dough.price + this.sauce.price);
+
       return total;
     },
   },

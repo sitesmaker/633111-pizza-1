@@ -11,8 +11,8 @@
         name="diameter"
         class="visually-hidden"
         :value="item.multiplier"
-        v-model="multiplier"
-        @change="$emit('multiplier', Number($event.target.value))"
+        v-model="getFirstMultiplier"
+        @change="UPDATE_MULTIPLIER($event.target.value)"
       />
       <span>{{ item.name }}</span>
     </label>
@@ -20,22 +20,13 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapState, mapGetters, mapMutations } from "vuex";
+import { UPDATE_MULTIPLIER } from "@/store/mutation-types.js";
 
 export default {
   name: "BuilderSizeSelector",
-  data() {
-    return {
-      multiplier: 1,
-    };
-  },
-  props: {
-    sizesClass: {
-      type: Array,
-      required: true,
-    },
-  },
   methods: {
+    ...mapMutations("Builder", [UPDATE_MULTIPLIER]),
     setClass(elemId, arr) {
       this.class = null;
       arr.forEach((el) => {
@@ -47,7 +38,10 @@ export default {
       return this.class;
     },
   },
-  computed: mapGetters(["sizesAll"]),
+  computed: {
+    ...mapGetters("Builder", ["sizesAll", "getFirstMultiplier"]),
+    ...mapState("Builder", ["sizesClass"]),
+  },
 };
 </script>
 

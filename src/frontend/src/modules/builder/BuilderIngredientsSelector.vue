@@ -7,7 +7,7 @@
     >
       <AppDrag
         class="filling"
-        :class="setClass(item.id, fillingClass)"
+        :class="setClass(item.id, getFillingClass)"
         :transfer-data="item"
         :draggable="item.count < 3 ? true : false"
       >
@@ -29,12 +29,6 @@ import AppDrag from "@/common/components/AppDrag.vue";
 
 export default {
   name: "BuilderIngredientsSelector",
-  props: {
-    fillingClass: {
-      type: Array,
-      required: true,
-    },
-  },
   components: {
     ItemCounter,
     AppDrag,
@@ -51,7 +45,7 @@ export default {
       return this.class;
     },
   },
-  computed: mapGetters(["IngredientsAll"]),
+  computed: mapGetters("Builder", ["IngredientsAll", "getFillingClass"]),
 };
 </script>
 

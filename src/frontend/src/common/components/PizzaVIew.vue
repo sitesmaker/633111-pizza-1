@@ -1,6 +1,6 @@
 <template>
   <div class="content__constructor">
-    <div class="pizza" :class="doughClass + '-' + sauceClass">
+    <div class="pizza" :class="dough.doughtClassResult + '-' + sauce.class">
       <AppDrop class="pizza__wrapper" @drop="$emit('addCount', $event)">
         <div
           class="pizza__filling"
@@ -12,8 +12,11 @@
     </div>
   </div>
 </template>
+
 <script>
 import AppDrop from "@/common/components/AppDrop.vue";
+import { mapState } from "vuex";
+
 export default {
   name: "PizzaVIew",
   data() {
@@ -23,25 +26,12 @@ export default {
       thirdClass: "pizza__filling--third",
     };
   },
-  props: {
-    ingredients: {
-      type: Array,
-      required: true,
-    },
-    doughClass: {
-      type: String,
-      required: true,
-    },
-    sauceClass: {
-      type: String,
-      required: true,
-    },
-  },
   components: { AppDrop },
   computed: {
+    ...mapState("Builder", ["dough", "sauce", "ingredientsList"]),
     UpdateIngredients() {
       let ingredientsClass = this.ingredientsClass;
-      this.ingredients.forEach((item) => {
+      this.ingredientsList.forEach((item) => {
         let ingredientsClassIndex = ingredientsClass.indexOf(item.class);
         if (ingredientsClassIndex !== -1) {
           ingredientsClass.splice(ingredientsClassIndex, 1);
@@ -56,7 +46,7 @@ export default {
   methods: {
     otherClass(itemClass) {
       let classVal = "";
-      this.ingredients.forEach((item) => {
+      this.ingredientsList.forEach((item) => {
         if (itemClass === item.class && item.count < 2) {
           classVal = "";
         }
