@@ -34,7 +34,8 @@
             </div>
           </div>
           <div class="content__pizza">
-            <PizzaVIew :ingredients="IngredientsAll" @addCount="addCount" />
+            <BuilderName />
+            <PizzaVIew @addCount="addCount" />
             <BuilderPriceCounter />
           </div>
         </div>
@@ -54,6 +55,7 @@ import BuilderDoughSelector from "@/modules/builder/BuilderDoughSelector.vue";
 import BuilderSizeSelector from "@/modules/builder/BuilderSizeSelector.vue";
 import BuilderPriceCounter from "@/modules/builder/BuilderPriceCounter.vue";
 import BuilderIngredientsSelector from "@/modules/builder/BuilderIngredientsSelector.vue";
+import BuilderName from "@/modules/builder/BuilderName.vue";
 
 export default {
   name: "IndexHome",
@@ -64,36 +66,13 @@ export default {
     BuilderSizeSelector,
     BuilderPriceCounter,
     BuilderIngredientsSelector,
+    BuilderName,
   },
   methods: {
     ...mapMutations("Builder", [UPDATE_COUNT, ADD_COUNT, INIT]),
     updateCount(payload) {
       this.UPDATE_COUNT(payload);
     },
-    // changeDough(data) {
-    //   let elemClass = this.foundationDought[0].class,
-    //     price = data.price;
-
-    //   this.foundationDought.forEach((el) => {
-    //     if (data.id === el.id) {
-    //       elemClass = el.class;
-    //     }
-    //   });
-    //   this.dough.price = price;
-    //   this.dough.elemClass = elemClass;
-    // },
-    // sauceChange(data) {
-    //   let sauceClass = this.sauceArrClass[0].class,
-    //     id = data.id,
-    //     price = data.price;
-    //   this.sauceArrClass.forEach((el) => {
-    //     if (id === el.id) {
-    //       sauceClass = el.class;
-    //     }
-    //   });
-    //   this.sauce.price = price;
-    //   this.sauce.sauceClass = sauceClass;
-    // },
     addCount($event) {
       if ($event.count < 3) {
         $event.count += 1;

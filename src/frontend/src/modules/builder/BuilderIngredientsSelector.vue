@@ -15,6 +15,7 @@
       </AppDrag>
       <ItemCounter
         :count="item.count"
+        :maxCount="3"
         @update:count="$emit('updateCount', { id: item.id, count: $event })"
       />
     </li>

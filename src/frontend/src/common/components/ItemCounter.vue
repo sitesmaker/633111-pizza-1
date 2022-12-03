@@ -18,8 +18,9 @@
     <button
       type="button"
       class="counter__button counter__button--plus"
+      :class="classText"
       @click="$emit('update:count', count + 1)"
-      :disabled="count >= 3"
+      :disabled="count >= maxCount"
     >
       <span class="visually-hidden">Больше</span>
     </button>
@@ -34,6 +35,14 @@ export default {
       type: Number,
       required: true,
     },
+    maxCount: {
+      type: Number,
+      required: true,
+    },
+    classText: {
+      type: String,
+      default: "",
+    },
   },
   methods: {
     numbersOnly($event) {
@@ -44,8 +53,8 @@ export default {
         $event.target.value = parsed;
       }
 
-      if ($event.target.value > 3) {
-        $event.target.value = 3;
+      if ($event.target.value > this.maxCount) {
+        $event.target.value = this.maxCount;
       }
       this.$emit("update:count", Number($event.target.value));
     },

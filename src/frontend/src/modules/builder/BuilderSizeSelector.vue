@@ -11,8 +11,8 @@
         name="diameter"
         class="visually-hidden"
         :value="item.multiplier"
-        v-model="getFirstMultiplier"
-        @change="UPDATE_MULTIPLIER($event.target.value)"
+        :checked="item.id === 1"
+        @change="UPDATE_MULTIPLIER(item.multiplier)"
       />
       <span>{{ item.name }}</span>
     </label>
@@ -39,7 +39,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters("Builder", ["sizesAll", "getFirstMultiplier"]),
+    ...mapGetters("Builder", ["sizesAll"]),
     ...mapState("Builder", ["sizesClass"]),
   },
 };

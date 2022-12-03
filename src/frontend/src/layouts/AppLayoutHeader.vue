@@ -11,7 +11,7 @@
       </router-link>
     </div>
     <div class="header__cart">
-      <router-link to="/cart" class="logo">0 ₽</router-link>
+      <router-link to="/cart" class="logo">{{ getTotalPrice }} ₽</router-link>
     </div>
     <div class="header__user">
       <router-link to="/login" class="header__login">
@@ -20,3 +20,23 @@
     </div>
   </header>
 </template>
+
+<script>
+import { GET_STORAGE } from "@/store/mutation-types.js";
+import { mapGetters, mapMutations } from "vuex";
+
+export default {
+  name: "AppLayoutHeader",
+  methods: {
+    ...mapMutations("Cart", [GET_STORAGE]),
+  },
+  computed: {
+    ...mapGetters("Cart", ["getTotalPrice"]),
+  },
+  mounted() {
+    if (localStorage.getItem("pizzes")) {
+      this.GET_STORAGE(JSON.parse(localStorage.getItem("pizzes")));
+    }
+  },
+};
+</script>
